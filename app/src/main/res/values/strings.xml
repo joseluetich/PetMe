@@ -1,3 +1,32 @@
 <resources>
     <string name="app_name">PetMe</string>
+
+    <!--Login-->
+    <string name="slogan">Encuentra a tu nuevo mejor amigo</string>
+    <string name="email">Email</string>
+    <string name="password">Contraseña</string>
+    <string name="forgotPassword">Olvidaste tu contraseña?</string>
+    <string name="signIn">Ingresar</string>
+    <string name="dontHaveAccount">Aún no tienes cuenta?</string>
+    <string name="signUp">Registrate</string>
+
+    <!--SignUp-->
+    <string name="createAccount">Crear cuenta</string>
+    <string name="lastName">Apellido</string>
+    <string name="name">Nombre</string>
+    <string name="birthday">Fecha de nacimiento</string>
+    <string name="province">Provincia</string>
+    <string name="city">Ciudad</string>
+
+    <!--Home-->
+    <string name="myProfile">Mi perfil</string>
+    <string name="adoptPet">Adoptar mascota</string>
+    <string name="donatePet">Dar mascota en adopción</string>
+    <string name="foundPets">Mascotas encontradas</string>
+    <string name="lostPets">Mascotas perdidas</string>
+    <string name="findVeterinary">Buscar veterinarias</string>
+    <string name="signOut">Cerrar Sesión</string>
+
+
+
 </resources>
