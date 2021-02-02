@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="@color/full_white"
+    android:background="@color/full_white"
     tools:context=".activities.LogInActivity">
 
     <ImageView
@@ -43,7 +44,7 @@
         app:layout_constraintTop_toBottomOf="@+id/appNameTextView" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/emailTextInputLayout"
+        android:id="@+id/emailLogInTextInputLayout"
         style="@style/AppTheme.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,14 +57,15 @@
         app:layout_constraintTop_toBottomOf="@+id/sloganTextView">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/emailEditText"
+            android:id="@+id/emailLogInEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:singleLine="true"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/passwordTextInputLayout"
+        android:id="@+id/passwordLogInTextInputLayout"
         style="@style/AppTheme.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,39 +75,44 @@
         android:hint="@string/password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailTextInputLayout">
+        app:layout_constraintTop_toBottomOf="@+id/emailLogInTextInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/passwordEditText"
+            android:id="@+id/passwordLogInEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:singleLine="true"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/forgotPasswordTextView"
+        android:id="@+id/logInError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
-        android:text="@string/forgotPassword"
-        android:textColor="@color/green_aquamarine"
+        android:text="@string/errorLogIn"
+        android:textColor="@color/error_red"
+        android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordTextInputLayout" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordLogInTextInputLayout"
+        tools:visibility="visible" />
 
     <Button
         android:id="@+id/signInButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="60dp"
         android:backgroundTint="@color/green_aquamarine"
         android:text="@string/signIn"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordTextInputLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/logInError" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -125,7 +132,7 @@
             android:textColor="@color/black" />
 
         <TextView
-            android:id="@+id/signOutTextView"
+            android:id="@+id/signUpTextView"
             android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:text="@string/signUp"
