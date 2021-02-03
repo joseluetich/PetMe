@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">PetMe</string>
+    <string name="mandatoryField">* Campo obligatorio</string>
 
     <!--Login-->
     <string name="slogan">Encuentra a tu nuevo mejor amigo</string>
     <string name="email">Email</string>
     <string name="password">Contraseña</string>
-    <string name="forgotPassword">Olvidaste tu contraseña?</string>
+    <string name="errorLogIn">ERROR: Email o contraseña incorrectos</string>
     <string name="signIn">Ingresar</string>
     <string name="dontHaveAccount">Aún no tienes cuenta?</string>
     <string name="signUp">Registrate</string>
@@ -14,9 +15,10 @@
     <string name="createAccount">Crear cuenta</string>
     <string name="lastName">Apellido</string>
     <string name="name">Nombre</string>
-    <string name="birthday">Fecha de nacimiento</string>
+    <string name="birthdate">Fecha de nacimiento</string>
     <string name="province">Provincia</string>
     <string name="city">Ciudad</string>
+    <string name="select">Seleccione</string>
 
     <!--Home-->
     <string name="myProfile">Mi perfil</string>
@@ -26,7 +28,6 @@
     <string name="lostPets">Mascotas perdidas</string>
     <string name="findVeterinary">Buscar veterinarias</string>
     <string name="signOut">Cerrar Sesión</string>
-
 
 
 </resources>
