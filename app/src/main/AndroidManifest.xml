@@ -9,7 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PetMe">
-        <activity android:name=".activities.CreateAccountActivity"></activity>
+        <activity android:name=".activities.FoundVeterinariesActivity"></activity>
+        <activity android:name=".activities.LostPetsActivity" />
+        <activity android:name=".activities.FoundPetsActivity" />
+        <activity android:name=".activities.DonatePetActivity" />
+        <activity android:name=".activities.AdoptPetActivity" />
+        <activity android:name=".activities.MyProfileActivity" />
+        <activity android:name=".activities.HomeActivity" />
+        <activity android:name=".activities.CreateAccountActivity" />
         <activity android:name=".activities.LogInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

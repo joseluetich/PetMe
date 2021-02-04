@@ -20,7 +20,7 @@
     <style name="Theme.App.Toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
         <!-- Customize color of navigation drawer icon and back arrow -->
         <item name="colorControlNormal">@color/full_white</item>
-        <item name="icon">@drawable/ic_round_account_button_with_user_inside</item>
+        <item name="icon">@drawable/ic_user_profile</item>
         <item name="android:background">?attr/colorPrimary</item>
         <item name="android:actionMenuTextAppearance">@font/rubik_bold</item>
         <item name="titleTextAppearance">@style/Theme.App.Toolbar.Title</item>
