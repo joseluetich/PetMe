@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PetMe">
-        <activity android:name=".activities.FoundVeterinariesActivity"></activity>
+        <activity android:name=".activities.FoundVeterinariesActivity" />
         <activity android:name=".activities.LostPetsActivity" />
         <activity android:name=".activities.FoundPetsActivity" />
         <activity android:name=".activities.DonatePetActivity" />

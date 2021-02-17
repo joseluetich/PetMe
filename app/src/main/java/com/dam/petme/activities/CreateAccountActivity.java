@@ -1,13 +1,12 @@
 package com.dam.petme.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,10 +17,22 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.dam.petme.R;
-import com.dam.petme.model.User;
 import com.dam.petme.fragments.DatePickerFragment;
+import com.dam.petme.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,12 +43,11 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 public class CreateAccountActivity extends AppCompatActivity {
@@ -53,10 +63,19 @@ public class CreateAccountActivity extends AppCompatActivity {
     String lastName, name, email, password, birthdate, province, city;
     Date birth;
 
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        //Get Database
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         lastNameTextInputLayout = findViewById(R.id.lastNameTextInputLayout);
         nameTextInputLayout = findViewById(R.id.nameTextInputLayout);
@@ -86,11 +105,11 @@ public class CreateAccountActivity extends AppCompatActivity {
             for (int i = 0; i < provincesArray.length(); i++) {
                 JSONObject provinceDetail = provincesArray.getJSONObject(i);
                 String prov = provinceDetail.getString("admin_name");
-                if(!provinces.contains(prov))
+                if (!provinces.contains(prov))
                     provinces.add(prov);
             }
             Collections.sort(provinces);
-            provinces.add(0,getResources().getString(R.string.select));
+            provinces.add(0, getResources().getString(R.string.select));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -103,19 +122,18 @@ public class CreateAccountActivity extends AppCompatActivity {
                     cities.clear();
                     for (int j = 0; j < citiesArray.length(); j++) {
                         JSONObject cityDetail = citiesArray.getJSONObject(j);
-                        if(cityDetail.getString("admin_name").equals(provinceSpinner.getSelectedItem().toString())) {
+                        if (cityDetail.getString("admin_name").equals(provinceSpinner.getSelectedItem().toString())) {
                             String city = cityDetail.getString("city");
                             cities.add(city);
                         }
                     }
                     Collections.sort(cities);
-                    if(cities.isEmpty()) {
+                    if (cities.isEmpty()) {
                         citySpinner.setEnabled(false);
-                    }
-                    else {
+                    } else {
                         citySpinner.setEnabled(true);
                     }
-                    cities.add(0,getResources().getString(R.string.select));
+                    cities.add(0, getResources().getString(R.string.select));
                     ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(CreateAccountActivity.this, android.R.layout.simple_spinner_item, cities);
                     cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     citySpinner.setAdapter(cityAdapter);
@@ -145,25 +163,64 @@ public class CreateAccountActivity extends AppCompatActivity {
                 province = provinceSpinner.getSelectedItem().toString();
                 city = citySpinner.getSelectedItem().toString();
 
-                DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_AR"));
                 try {
                     birth = dateFormat.parse(birthdate);
-                    System.out.println(birth.toString());
-                }
-                catch (ParseException e) {
+                } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
-                if(validNewUser()) {
-                    //Intent intent = new Intent(LogInActivity.this, CreateAccountActivity.class);
-                    //startActivity(intent);
-                    user = new User(lastName,name,email,password,birth,province,city);
-                    Toast.makeText(CreateAccountActivity.this, "Se ha creado la cuenta exitosamente", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(CreateAccountActivity.this, HomeActivity.class);
-                    startActivity(intent);
+                if (validNewUser()) {
+                    user = new User(lastName, name, email, password, birth, province, city);
+                    System.out.println(user.getBirthdate());
+                    createUserInFireBase(user);
                 }
             }
         });
+
+    }
+
+    private void createUserInFireBase(User user) {
+        mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("FB/Auth", "createUserWithEmail:success");
+                            FirebaseUser userFb = mAuth.getCurrentUser();
+                            // Create new post at /user-posts/$userid/$postid and at
+                            // /posts/$postid simultaneously
+                            String key = mDatabase.child("posts").push().getKey();
+
+                            Map<String, Object> userValues = user.toMap();
+                            mDatabase.child("users").child(userFb.getUid())
+                                    .setValue(userValues).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    // Write was successful!
+                                    Log.d("FB/DataBase", "saveUser:success");
+//                                    Intent intent = new Intent(CreateAccountActivity.this, HomeActivity.class);
+//                                    startActivity(intent);
+                                }
+                            })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Write failed
+                                            Log.w("FB/DataBase", "saveUser:failure", e);
+                                        }
+                                    });
+
+                            Toast.makeText(CreateAccountActivity.this, "Se ha creado la cuenta exitosamente", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("FB/Auth", "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(CreateAccountActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
     }
 
@@ -172,7 +229,7 @@ public class CreateAccountActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 // +1 because January is zero
-                final String selectedDate = twoDigits(day) + "/" + twoDigits(month+1) + "/" + year;
+                final String selectedDate = twoDigits(day) + "/" + twoDigits(month + 1) + "/" + year;
                 birthdateEditText.setText(selectedDate);
             }
         });
@@ -180,7 +237,7 @@ public class CreateAccountActivity extends AppCompatActivity {
     }
 
     private String twoDigits(int n) {
-        return (n<=9) ? ("0"+n) : String.valueOf(n);
+        return (n <= 9) ? ("0" + n) : String.valueOf(n);
     }
 
     public String loadJSONFromAsset() { //Lee y retorna el json como string

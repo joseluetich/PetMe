@@ -1,7 +1,13 @@
 package com.dam.petme.model;
 
-import java.util.Date;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+@IgnoreExtraProperties
 public class User {
     private String lastName;
     private String name;
@@ -24,6 +30,20 @@ public class User {
         this.birthdate = birthdate;
         this.province = province;
         this.city = city;
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("last_name", lastName);
+        result.put("name", name);
+        result.put("email", email);
+        result.put("password", password);
+        result.put("birthday", birthdate.getTime());
+        result.put("province", province);
+        result.put("city", city);
+
+        return result;
     }
 
     public String getLastName() {
