@@ -33,6 +33,10 @@
     <string name="findVeterinary">Buscar veterinarias</string>
     <string name="signOut">Cerrar Sesión</string>
 
+    <!-- Lost Pets -->
+    <string name="filter">+ Filtrar</string>
+    <string name="mapView" >Ver Mapa</string>
+
     <!--MyProfile-->
     <string name="home">Home</string>
     <string name="workSituation">Situación laboral</string>
