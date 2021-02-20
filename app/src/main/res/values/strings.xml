@@ -12,6 +12,7 @@
     <string name="signUp">Registrate</string>
 
     <!--SignUp-->
+    <string name="logIn">Log in</string>
     <string name="createAccount">Crear cuenta</string>
     <string name="lastName">Apellido</string>
     <string name="name">Nombre</string>
@@ -19,6 +20,8 @@
     <string name="province">Provincia</string>
     <string name="city">Ciudad</string>
     <string name="select">Seleccione</string>
+    <string name="takePhoto">Tomar foto</string>
+    <string name="uploadPhoto">Subir foto</string>
 
     <!--Home-->
     <string name="myProfile">Mi perfil</string>
@@ -28,6 +31,21 @@
     <string name="lostPets">Mascotas perdidas</string>
     <string name="findVeterinary">Buscar veterinarias</string>
     <string name="signOut">Cerrar Sesión</string>
+
+    <!--MyProfile-->
+    <string name="home">Home</string>
+    <string name="workSituation">Situación laboral</string>
+    <string name="description">Descripción</string>
+    <string name="phone">Teléfono</string>
+    <string name="editProfile">Editar perfil</string>
+    <string name="myCollection">Mi colección</string>
+
+    <!--Profile collection-->
+    <string name="myFavPets">Mis mascotas favoritas</string>
+    <string name="myDonatePets">Mis mascotas en adopción</string>
+    <string name="myFoundPets">Mis mascotas encontradas</string>
+    <string name="myLostPets">Mis mascotas perdidas</string>
+    <string name="myVeterinaries">Mis veterinarias</string>
 
 
 </resources>

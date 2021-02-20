@@ -16,7 +16,7 @@ public class User {
     private Date birthdate;
     private String province;
     private String city;
-    //TODO Ver si ponemos ubicacion en mapa o ciudad y provincia
+    private String photo;
 
 
     public User() {
@@ -100,5 +100,13 @@ public class User {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 }
