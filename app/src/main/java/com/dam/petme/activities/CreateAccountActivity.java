@@ -1,9 +1,5 @@
 package com.dam.petme.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -29,27 +25,25 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.dam.petme.R;
 import com.dam.petme.fragments.DatePickerFragment;
 import com.dam.petme.model.User;
-import com.dam.petme.fragments.DatePickerFragment;
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,6 +66,8 @@ import java.util.Objects;
 
 public class CreateAccountActivity extends AppCompatActivity {
 
+    static final int CAMARA_REQUEST = 1;
+    static final int GALERIA_REQUEST = 2;
     TextInputLayout birthDateTextInputLayout, lastNameTextInputLayout, nameTextInputLayout, emailTextInputLayout,
             passwordTextInputLayout;
     EditText birthdateEditText;
@@ -83,9 +79,6 @@ public class CreateAccountActivity extends AppCompatActivity {
     String lastName, name, email, password, birthdate, province, city;
     Date birth;
     Toolbar createAccountToolbar;
-
-    static final int CAMARA_REQUEST = 1;
-    static final int GALERIA_REQUEST = 2;
     byte[] photo;
     StorageReference userPhotoRef, storageRef;
     FirebaseStorage storage;
@@ -120,6 +113,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         createAccountButton = findViewById(R.id.createAccountButton);
         takePhotoButton = findViewById(R.id.takePhotoButton);
         uploadPhotoButton = findViewById(R.id.uploadPhotoButton);
+        photoImageView = findViewById(R.id.userProfileImageView);
 
         photoImageView.setVisibility(View.GONE);
 
@@ -227,7 +221,6 @@ public class CreateAccountActivity extends AppCompatActivity {
 
                 if (validNewUser()) {
                     user = new User(lastName, name, email, password, birth, province, city);
-                    System.out.println(user.getBirthdate());
                     createUserInFireBase(user);
                 }
             }
@@ -255,8 +248,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                                 public void onSuccess(Void aVoid) {
                                     // Write was successful!
                                     Log.d("FB/DataBase", "saveUser:success");
-//                                    Intent intent = new Intent(CreateAccountActivity.this, HomeActivity.class);
-//                                    startActivity(intent);
+                                    loginUser(user.getEmail(), user.getPassword());
                                 }
                             })
                                     .addOnFailureListener(new OnFailureListener() {
@@ -390,7 +382,7 @@ public class CreateAccountActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
             if (requestCode == CAMARA_REQUEST) {
                 Bundle extras = data.getExtras();
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
@@ -401,8 +393,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                 photoImageView.setVisibility(View.VISIBLE); //preview
                 photoImageView.setImageBitmap(imageBitmap);
 
-            }
-            else if(requestCode == GALERIA_REQUEST) {
+            } else if (requestCode == GALERIA_REQUEST) {
                 Uri selectedImage = data.getData();
                 InputStream is;
                 try {
@@ -416,7 +407,8 @@ public class CreateAccountActivity extends AppCompatActivity {
 
                     photoImageView.setImageBitmap(bitmap);
                     photoImageView.setVisibility(View.VISIBLE);
-                } catch (FileNotFoundException e) {}
+                } catch (FileNotFoundException e) {
+                }
             }
         }
 
@@ -426,7 +418,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         final Context context = this;
 
         // Creamos una referencia a 'images/plato_id.jpg'
-        userPhotoRef = storageRef.child("images/"+user.getEmail()+".jpg");
+        userPhotoRef = storageRef.child("images/" + user.getEmail() + ".jpg");
 
         // Cualquiera de los tres métodos tienen la misma implementación, se debe utilizar el que corresponda
         UploadTask uploadTask = userPhotoRef.putBytes(photo);
@@ -459,5 +451,28 @@ public class CreateAccountActivity extends AppCompatActivity {
         });
     }
 
+    private void loginUser(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this,
+                        new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d("FB/Auth", "signInWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    Intent intent = new Intent(CreateAccountActivity.this, HomeActivity.class);
+                                    startActivity(intent);
+
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w("FB/Auth", "signInWithEmail:failure", task.getException());
+                                    Toast.makeText(CreateAccountActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        });
+    }
 
 }
