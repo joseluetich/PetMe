@@ -47,5 +47,13 @@
     <string name="myLostPets">Mis mascotas perdidas</string>
     <string name="myVeterinaries">Mis veterinarias</string>
 
+    <!--Upload found pet-->
+    <string name="uploadFoundPets">Agregar mascota encontrada</string>
+    <string name="race">Raza</string>
+    <string name="gender">Género</string>
+    <string name="maxCharacters">[300 caractéres máx.]</string>
+    <string name="foundLocation">Cargar ubicación donde se encontró</string>
+    <string name="uploadPet">Cargar mascota</string>
+
 
 </resources>

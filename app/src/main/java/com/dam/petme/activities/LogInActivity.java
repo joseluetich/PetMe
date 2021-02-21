@@ -57,6 +57,8 @@ public class LogInActivity extends AppCompatActivity {
 
                 if (validUser()) {
                     Toast.makeText(LogInActivity.this, "Ingresa", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LogInActivity.this, UploadFoundPetActivity.class);
+                    startActivity(intent);
                 }
             }
         });
