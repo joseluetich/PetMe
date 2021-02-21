@@ -20,11 +20,12 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:theme="@style/Theme.App.Toolbar"
-            app:title=" "
-            app:navigationIcon="?attr/homeAsUpIndicator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:title="@string/logIn"
+            app:titleTextColor="@color/full_white" />
 
         <TextView
             android:id="@+id/createAccountTextView"
@@ -191,6 +192,61 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cityTextView" />
 
+        <ImageView
+            android:id="@+id/userProfileImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_max="100dp"
+            app:layout_constraintHeight_min="100dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+            app:layout_constraintWidth_max="100dp"
+            app:layout_constraintWidth_min="100dp"
+            tools:srcCompat="@tools:sample/avatars"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/citySpinner">
+
+            <Button
+                android:id="@+id/takePhotoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:backgroundTint="@color/full_white"
+                android:drawableLeft="@drawable/ic_camera"
+                android:text="@string/takePhoto"
+                android:textAllCaps="false"
+                android:textColor="@color/black" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/uploadPhotoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:backgroundTint="@color/full_white"
+                android:drawableLeft="@drawable/ic_photos"
+                android:text="@string/uploadPhoto"
+                android:textAllCaps="false"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+
         <Button
             android:id="@+id/createAccountButton"
             android:layout_width="0dp"
@@ -205,7 +261,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/citySpinner" />
+            app:layout_constraintTop_toBottomOf="@+id/userProfileImageView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
