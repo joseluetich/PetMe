@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dam.petme.R;
+import com.dam.petme.model.PetStatus;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -57,8 +58,7 @@ public class LogInActivity extends AppCompatActivity {
 
                 if (validUser()) {
                     Toast.makeText(LogInActivity.this, "Ingresa", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LogInActivity.this, UploadFoundPetActivity.class);
-                    startActivity(intent);
+
                 }
             }
         });
@@ -85,6 +85,9 @@ public class LogInActivity extends AppCompatActivity {
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 Intent intent = new Intent(LogInActivity.this, HomeActivity.class);
                                 startActivity(intent);
+                                //Intent intent = new Intent(LogInActivity.this, AddPetActivity.class);
+                                //intent.putExtra("status", PetStatus.LOST);
+                                //startActivity(intent);
 
                             } else {
                                 // If sign in fails, display a message to the user.

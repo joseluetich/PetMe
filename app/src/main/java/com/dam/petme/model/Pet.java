@@ -4,6 +4,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.PropertyName;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Pet {
 
     private String id;
@@ -22,7 +28,7 @@ public class Pet {
     public Pet() {
     }
 
-    public Pet(String name, String race, Float age, Float weight, String description, Gender gender, String province, String city, PetStatus status, PetType type, String profileImage) {
+    public Pet(String name, String race, Float age, Float weight, String description, Gender gender, String province, String city, PetStatus status, PetType type) {
         this.name = name;
         this.race = race;
         this.age = age;
@@ -33,7 +39,23 @@ public class Pet {
         this.city = city;
         this.status = status;
         this.type = type;
-        this.profileImage = profileImage;
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("name", name);
+        result.put("race", race);
+        result.put("type", type);
+        result.put("gender", gender);
+        result.put("province", province);
+        result.put("weight", weight);
+        result.put("status", status);
+        result.put("city", city);
+        result.put("description", description);
+        result.put("profile_image", profileImage);
+
+        return result;
     }
 
     public String getId() {
@@ -124,10 +146,12 @@ public class Pet {
         this.type = type;
     }
 
+    @PropertyName("profile_image")
     public String getProfileImage() {
         return profileImage;
     }
 
+    @PropertyName("profile_image")
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
