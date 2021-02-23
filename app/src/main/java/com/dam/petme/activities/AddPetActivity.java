@@ -1,14 +1,17 @@
 package com.dam.petme.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -54,8 +57,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class AddPetActivity extends AppCompatActivity {
 
@@ -248,7 +253,7 @@ public class AddPetActivity extends AppCompatActivity {
                     pet = new Pet(name, race, null, null, description, gender, province, city, status, type);
                     pet.setLatitude(String.valueOf(latitude));
                     pet.setLongitude(String.valueOf(longitude));
-                    savePhoto();
+                    createPetInFireBase();
                 }
             }
         });
@@ -388,10 +393,8 @@ public class AddPetActivity extends AppCompatActivity {
 
     }
 
-    public void savePhoto() {
+    public void savePhoto(Consumer<Boolean> onSuccess) {
         final Context context = this;
-
-        pet.setId(String.valueOf(System.currentTimeMillis()));
 
         // Creamos una referencia a 'images/plato_id.jpg'
         petPhotoRef = storageRef.child("pets/" + pet.getId() + "-profile.jpg");
@@ -412,13 +415,14 @@ public class AddPetActivity extends AppCompatActivity {
                 return petPhotoRef.getDownloadUrl();
             }
         }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
                     // URL de descarga del archivo
                     Uri downloadUri = task.getResult();
                     pet.setProfileImage("pets/" + pet.getId() + "-profile.jpg");
-                    createPetInFireBase(pet);
+                    onSuccess.accept(true);
                 } else {
                     Toast.makeText(context, "Error al cargar la imagen", Toast.LENGTH_LONG).show();
                 }
@@ -426,7 +430,8 @@ public class AddPetActivity extends AppCompatActivity {
         });
     }
 
-    private void createPetInFireBase(Pet pet) {
+    private void createPetInFireBase() {
+        pet.setId(mDatabase.child("pets").push().getKey());
         Map<String, Object> petValues = pet.toMap();
         mDatabase.child("pets").child(pet.getId())
                 .setValue(petValues).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -434,6 +439,12 @@ public class AddPetActivity extends AppCompatActivity {
             public void onSuccess(Void aVoid) {
                 // Write was successful!
                 Log.d("FB/DataBase", "savePet:success");
+                savePhoto(bool -> {
+                    Map<String, Object> childUpdates = new HashMap<>();
+                    childUpdates.put("/pets/" + pet.getId(), pet.toMap());
+                    mDatabase.updateChildren(childUpdates);
+                    finish();
+                });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

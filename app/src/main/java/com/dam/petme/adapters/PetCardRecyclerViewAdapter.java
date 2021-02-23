@@ -1,6 +1,5 @@
 package com.dam.petme.adapters;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
@@ -13,10 +12,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.dam.petme.R;
-import com.dam.petme.dummy.DummyContent.DummyItem;
 import com.dam.petme.model.Pet;
 import com.dam.petme.model.PetType;
+import com.dam.petme.utils.GlideApp;
+import com.dam.petme.utils.MyAppGlideModule;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -24,10 +25,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class PetCardRecyclerViewAdapter extends RecyclerView.Adapter<PetCardRecyclerViewAdapter.ViewHolder> {
 
     private final List<Pet> pets;
@@ -48,7 +45,16 @@ public class PetCardRecyclerViewAdapter extends RecyclerView.Adapter<PetCardRecy
         holder.mItem = pets.get(position);
         holder.nameTextView.setText(holder.mItem.getName());
         holder.locationTextView.setText(holder.mItem.getCity() + ", " + holder.mItem.getProvince());
-        holder.profilePictureImageView.setImageURI(getPetImage(holder.mItem.getProfileImage()));
+        if(holder.mItem.getProfileImage() != null) {
+            // Reference to an image file in Cloud Storage
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(holder.mItem.getProfileImage());
+
+            // Download directly from StorageReference using Glide
+            // (See MyAppGlideModule for Loader registration)
+            GlideApp.with(holder.profilePictureImageView.getContext())
+                    .load(storageReference)
+                    .into(holder.profilePictureImageView);
+        }
         holder.typeImageView.setImageDrawable(holder.mItem.getType() == PetType.CAT ? holder.catIcon : holder.dogIcon);
     }
 
@@ -85,23 +91,4 @@ public class PetCardRecyclerViewAdapter extends RecyclerView.Adapter<PetCardRecy
         }
     }
 
-    public Uri getPetImage(String route){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        final Uri[] result = {null};
-        storageRef.child(route).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                // Got the download URL for 'users/me/profile.png'
-                result[0] = uri;
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-                Log.d("FirebaseStorage","Error downloading image");
-            }
-        });
-        return result[0];
-    }
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.dam.petme.R;
 import com.dam.petme.activities.LostPetsActivity;
 import com.dam.petme.adapters.PetCardRecyclerViewAdapter;
 import com.dam.petme.model.Pet;
+import com.dam.petme.viewModel.PetViewModel;
 
 import java.util.ArrayList;
 
@@ -52,11 +54,8 @@ public class PetCardFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-            pets = getArguments().getParcelableArrayList("petsList");
-
-            System.out.println(pets);
-            System.out.println(pets.size());
         }
+
     }
 
     @Override
@@ -73,11 +72,20 @@ public class PetCardFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-
-            recyclerView.setAdapter(new PetCardRecyclerViewAdapter(pets));
+            recyclerView.setAdapter(new PetCardRecyclerViewAdapter(this.pets));
+            PetViewModel model = new ViewModelProvider(this).get(PetViewModel.class);
+            model.getPetsByStatus("FOUND").observe(requireActivity(), pets -> {
+                // update UI
+                System.out.println("Fragment");
+                System.out.println(pets);
+                this.pets = (ArrayList<Pet>) pets;
+                recyclerView.setAdapter(new PetCardRecyclerViewAdapter(this.pets));
+                //recyclerView.getAdapter().notifyDataSetChanged();
+            });
         }
 
-        ((LostPetsActivity) getActivity()).setFragmentRefreshListener(new LostPetsActivity.FragmentRefreshListener() {
+
+        /*((LostPetsActivity) getActivity()).setFragmentRefreshListener(new LostPetsActivity.FragmentRefreshListener() {
             @Override
             public void onRefresh() {
                 // your method
@@ -87,7 +95,8 @@ public class PetCardFragment extends Fragment {
                     System.out.println(pets.size());
                 }
             }
-        });
+        });*/
         return view;
     }
+
 }
