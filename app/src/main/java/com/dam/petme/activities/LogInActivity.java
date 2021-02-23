@@ -90,7 +90,7 @@ public class LogInActivity extends AppCompatActivity {
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w("FB/Auth", "signInWithEmail:failure", task.getException());
-                                Toast.makeText(LogInActivity.this, "Authentication failed.",
+                                Toast.makeText(LogInActivity.this, "Usuario inválido",
                                         Toast.LENGTH_SHORT).show();
                             }
 

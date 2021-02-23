@@ -45,7 +45,9 @@
     <string name="phone">Teléfono</string>
     <string name="editProfile">Editar perfil</string>
     <string name="myCollection">Mi colección</string>
-
+    <string name="unknownDescription">Descripción desconocida</string>
+    <string name="unknownSituation">Situación desconocida</string>
+    <string name="unknownPhone">Teléfono desconocido</string>
     <!--Profile collection-->
     <string name="myFavPets">Mis mascotas favoritas</string>
     <string name="myDonatePets">Mis mascotas en adopción</string>
@@ -73,5 +75,9 @@
     <string name="contactResponsable">Contactar al responsable</string>
     <string name="addToFavourites">Agregar a favoritos</string>
     <string name="responsable">Publicado por</string>
+    <string name="unknownName">Nombre desconocido</string>
+    <string name="unknownAge">Edad desconocida</string>
+    <string name="unknownWeight">Peso desconocido</string>
+    <string name="unknownRace">Raza desconocida</string>
 
 </resources>

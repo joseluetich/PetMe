@@ -9,17 +9,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dam.petme.R;
 import com.dam.petme.model.Pet;
 import com.dam.petme.model.User;
+import com.dam.petme.utils.GlideApp;
 import com.dam.petme.viewModel.PetViewModel;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Date;
 
@@ -28,6 +32,7 @@ public class PetProfileActivity extends AppCompatActivity {
     TextView genderTextView, weightTextView, cityTextView, descriptionTextView, raceTextView, petNameTextView,
             petAgeTextView, stateTextView, responsableTextView;
     Button contactResponsableButton, addToFavouriteButton;
+    ImageView petProfileImageView;
     private DatabaseReference mDatabase;
 
     @Override
@@ -50,7 +55,7 @@ public class PetProfileActivity extends AppCompatActivity {
         responsableTextView = findViewById(R.id.responsableTextView);
         contactResponsableButton = findViewById(R.id.contactResponsableButton);
         addToFavouriteButton = findViewById(R.id.addToFavouriteButton);
-
+        petProfileImageView = findViewById(R.id.petProfileImageView);
 
         mDatabase.child("pets").child(petId).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
             @Override
@@ -83,19 +88,43 @@ public class PetProfileActivity extends AppCompatActivity {
     }
 
     public void setPetFields(Pet pet) {
-        if(pet.getName()!=null) petNameTextView.setText(pet.getName());
-        else petNameTextView.setText("Nombre desconocido");
-        if(pet.getAge()!=null) petAgeTextView.setText(String.valueOf(pet.getAge()));
-        else petAgeTextView.setText("Edad desconocida");
-        genderTextView.setText(pet.getGender().toString());
-        if(pet.getWeight()!=null) weightTextView.setText(String.valueOf(pet.getWeight()));
-        else weightTextView.setText("Peso desconocido");
-        cityTextView.setText(pet.getCity()+", "+pet.getProvince());
-        descriptionTextView.setText(pet.getDescription());
-        if(pet.getRace()!=null) raceTextView.setText(pet.getRace());
-        else raceTextView.setText("Raza desconocida");
-        stateTextView.setText(pet.getStatus().toString());
+        System.out.println("RACE "+pet.getRace());
+        System.out.println("NAME "+pet.getName());
+        if(!pet.getName().equals(null) && !pet.getName().isEmpty())
+            petNameTextView.setText(pet.getName());
+        else
+            petNameTextView.setText(getResources().getString(R.string.unknownName));
 
+        if(pet.getAge()!=null)
+            petAgeTextView.setText(String.valueOf(pet.getAge()));
+        else
+            petAgeTextView.setText(getResources().getString(R.string.unknownAge));
+
+        if(pet.getWeight()!=null)
+            weightTextView.setText(String.valueOf(pet.getWeight()));
+        else
+            weightTextView.setText(getResources().getString(R.string.unknownWeight));
+
+        if(!pet.getRace().equals(null) && !pet.getRace().isEmpty())
+            raceTextView.setText(pet.getRace());
+        else
+            raceTextView.setText(getResources().getString(R.string.unknownRace));
+
+        String city = pet.getCity()+", "+pet.getProvince();
+        cityTextView.setText(city);
+        descriptionTextView.setText(pet.getDescription());
+        stateTextView.setText(pet.getStatus().toString());
+        genderTextView.setText(pet.getGender().toString());
+
+        if(pet.getProfileImage() != null) {
+            // Reference to an image file in Cloud Storage
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(pet.getProfileImage());
+            // Download directly from StorageReference using Glide
+            // (See MyAppGlideModule for Loader registration)
+            GlideApp.with(petProfileImageView.getContext())
+                    .load(storageReference)
+                    .into(petProfileImageView);
+        }
         setResponsable(pet);
     }
 
@@ -105,7 +134,8 @@ public class PetProfileActivity extends AppCompatActivity {
             public void onSuccess(DataSnapshot dataSnapshot) {
                 Log.d("firebase", String.valueOf(dataSnapshot.getValue()));
                 User user = dataSnapshot.getValue(User.class);
-                responsableTextView.setText(user.getName() + " " + user.getLastName());
+                String name = user.getName() + " " + user.getLastName();
+                responsableTextView.setText(name);
             }
         }).addOnCanceledListener(new OnCanceledListener() {
             @Override

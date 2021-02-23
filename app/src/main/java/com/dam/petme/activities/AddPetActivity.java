@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -32,6 +33,7 @@ import com.dam.petme.model.Gender;
 import com.dam.petme.model.Pet;
 import com.dam.petme.model.PetStatus;
 import com.dam.petme.model.PetType;
+import com.dam.petme.utils.NotificationPublisher;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -56,6 +58,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -120,7 +123,7 @@ public class AddPetActivity extends AppCompatActivity {
 
         uploadFoundPetToolbar = findViewById(R.id.uploadFoundPetToolbar);
         setSupportActionBar(uploadFoundPetToolbar);
-        uploadFoundPetToolbar.setTitle("Mascotas "+status.toStringPlural());
+        uploadFoundPetToolbar.setTitle("Mascotas "+status.toStringPlural().toLowerCase());
 
         nameTextInputLayout = findViewById(R.id.nameTextInputLayout);
         raceTextInputLayout = findViewById(R.id.raceTextInputLayout);
@@ -257,6 +260,10 @@ public class AddPetActivity extends AppCompatActivity {
                     pet.setLatitude(String.valueOf(latitude));
                     pet.setLongitude(String.valueOf(longitude));
                     createPetInFireBase();
+                    new SimpleAsyncTask(uploadFoundPetButton).execute();
+                    Intent intent = new Intent(AddPetActivity.this, LostPetsActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                 }
             }
         });
@@ -458,7 +465,39 @@ public class AddPetActivity extends AppCompatActivity {
             }
         });
 
-        Toast.makeText(AddPetActivity.this, "Se ha agregado la mascota exitosamente", Toast.LENGTH_SHORT).show();
+    }
 
+    private static class SimpleAsyncTask extends AsyncTask<Void, Void, String> {
+
+        private WeakReference<Button> mButton;
+
+        SimpleAsyncTask(Button button) {
+            mButton = new WeakReference<>(button);
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+
+            final int SLEEP_TIME = 1000;
+
+            // Sleep for the random amount of time
+            try {
+                Log.println(Log.INFO, "G", "Going to sleep for " + SLEEP_TIME + " milliseconds!");
+                Thread.sleep(SLEEP_TIME);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            // Return a String result
+            Log.println(Log.INFO, "G", "Awake at last after sleeping for " + SLEEP_TIME + " milliseconds!");
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+            Log.println(Log.INFO, "G","Awaking");
+            NotificationPublisher notificationPublisher = NotificationPublisher.getInstance();
+            Intent intent = new Intent();
+            notificationPublisher.onReceive(mButton.get().getContext(),intent);
+        }
     }
 }
