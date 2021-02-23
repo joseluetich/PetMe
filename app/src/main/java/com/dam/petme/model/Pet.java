@@ -1,8 +1,7 @@
 package com.dam.petme.model;
 
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.Exclude;
@@ -11,7 +10,7 @@ import com.google.firebase.database.PropertyName;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Pet {
+public class Pet implements Parcelable {
 
     private String id;
     private String name;
@@ -70,6 +69,16 @@ public class Pet {
         this.id = id;
     }
 
+    @PropertyName("key")
+    public Long getKey() {
+        return Long.valueOf(id);
+    }
+
+    @PropertyName("key")
+    public void setKey(Long id) {
+        this.id = String.valueOf(id);
+    }
+
     public String getName() {
         return name;
     }
@@ -123,7 +132,7 @@ public class Pet {
     }
 
     public void setProvince(String province) {
-        province = province;
+            this.province = province;
     }
 
     public String getCity() {
@@ -175,4 +184,50 @@ public class Pet {
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
+
+    private Pet(Parcel in) {
+        name = in.readString();
+        race = in.readString();
+        age = in.readFloat();
+        weight = in.readFloat();
+        description = in.readString();
+        gender = Gender.valueOf(in.readString());
+        province = in.readString();
+        city = in.readString();
+        status = PetStatus.valueOf(in.readString());
+        profileImage = in.readString();
+        type = PetType.valueOf(in.readString());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(name);
+        parcel.writeString(race);
+        parcel.writeFloat(age);
+        parcel.writeFloat(weight);
+        parcel.writeString(description);
+        parcel.writeString(gender.toString());
+        parcel.writeString(province);
+        parcel.writeString(city);
+        parcel.writeString(status.toString());
+        parcel.writeString(profileImage);
+        parcel.writeString(type.toString());
+    }
+
+    public static final Creator<Pet> CREATOR = new Creator<Pet>() {
+        @Override
+        public Pet createFromParcel(Parcel in) {
+            return new Pet(in);
+        }
+
+        @Override
+        public Pet[] newArray(int size) {
+            return new Pet[size];
+        }
+    };
 }

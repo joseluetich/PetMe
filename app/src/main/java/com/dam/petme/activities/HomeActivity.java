@@ -1,12 +1,17 @@
 package com.dam.petme.activities;
 
 import android.content.Intent;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
 import com.dam.petme.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 public class HomeActivity extends AppCompatActivity {
+
 
     Button myProfileButton, adoptPetButton, donatePetButton, foundPetsButton, lostPetsButton, foundVeterinariesButton;
     TextView signOutTextView;
@@ -24,6 +30,15 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        lostPetsButton = findViewById(R.id.lostPetsButton);
+
+        lostPetsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, LostPetsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser userFb = mAuth.getCurrentUser();
