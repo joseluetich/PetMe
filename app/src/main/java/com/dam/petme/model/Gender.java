@@ -4,6 +4,5 @@ public enum Gender {
 
     FEMALE,
     MALE,
-    UNKNOWN
-
+    UNKNOWN;
 }

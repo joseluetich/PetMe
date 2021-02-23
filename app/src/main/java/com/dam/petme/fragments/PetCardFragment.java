@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,11 @@ import android.view.ViewGroup;
 import com.dam.petme.adapters.PetCardRecyclerViewAdapter;
 import com.dam.petme.R;
 import com.dam.petme.dummy.DummyContent;
+import com.dam.petme.model.Pet;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -25,7 +32,7 @@ public class PetCardFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-
+    private ArrayList<Pet> pets = new ArrayList<>();
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -49,6 +56,7 @@ public class PetCardFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            pets = getArguments().getParcelableArrayList("petsList");
         }
     }
 
@@ -66,7 +74,8 @@ public class PetCardFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new PetCardRecyclerViewAdapter(DummyContent.ITEMS));
+
+            recyclerView.setAdapter(new PetCardRecyclerViewAdapter(pets));
         }
         return view;
     }
