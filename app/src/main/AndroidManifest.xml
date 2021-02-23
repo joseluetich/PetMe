@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PetMe">
-        <activity android:name=".activities.PetProfileActivity"></activity>
+        <activity android:name=".activities.PetProfileActivity" />
         <activity
             android:name=".activities.PetLocationActivity"
             android:parentActivityName=".activities.AddPetActivity">

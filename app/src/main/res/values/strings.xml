@@ -35,8 +35,8 @@
 
     <!-- Pets list -->
     <string name="filter">+ Filtrar</string>
-    <string name="mapView" >Ver Mapa</string>
-    <string name="viewProfile" >Ver perfil</string>
+    <string name="mapView">Ver Mapa</string>
+    <string name="viewProfile">Ver perfil</string>
 
     <!--MyProfile-->
     <string name="home">Home</string>

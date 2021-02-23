@@ -10,7 +10,7 @@ import com.google.firebase.database.PropertyName;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Pet implements Parcelable {
+public class Pet {
 
     private String id;
     private String name;
@@ -26,6 +26,7 @@ public class Pet implements Parcelable {
     private String profileImage;
     private String latitude;
     private String longitude;
+    private String responsableId;
 
     public Pet() {
     }
@@ -46,6 +47,7 @@ public class Pet implements Parcelable {
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
+        result.put("id", id);
         result.put("name", name);
         result.put("race", race);
         result.put("type", type);
@@ -58,25 +60,19 @@ public class Pet implements Parcelable {
         result.put("profile_image", profileImage);
         result.put("latitude",latitude);
         result.put("longitude",longitude);
+        result.put("responsable",responsableId);
         return result;
     }
 
+    //@PropertyName("key")
     public String getId() {
         return id;
     }
 
+    //@PropertyName("key")
     public void setId(String id) {
+        System.out.println("id   "+id);
         this.id = id;
-    }
-
-    @PropertyName("key")
-    public Long getKey() {
-        return Long.valueOf(id);
-    }
-
-    @PropertyName("key")
-    public void setKey(Long id) {
-        this.id = String.valueOf(id);
     }
 
     public String getName() {
@@ -185,49 +181,13 @@ public class Pet implements Parcelable {
         this.longitude = longitude;
     }
 
-    private Pet(Parcel in) {
-        name = in.readString();
-        race = in.readString();
-        age = in.readFloat();
-        weight = in.readFloat();
-        description = in.readString();
-        gender = Gender.valueOf(in.readString());
-        province = in.readString();
-        city = in.readString();
-        status = PetStatus.valueOf(in.readString());
-        profileImage = in.readString();
-        type = PetType.valueOf(in.readString());
+    @PropertyName("responsable")
+    public String getResponsableId() {
+        return responsableId;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    @PropertyName("responsable")
+    public void setResponsableId(String responsableId) {
+        this.responsableId = responsableId;
     }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(name);
-        parcel.writeString(race);
-        parcel.writeFloat(age);
-        parcel.writeFloat(weight);
-        parcel.writeString(description);
-        parcel.writeString(gender.toString());
-        parcel.writeString(province);
-        parcel.writeString(city);
-        parcel.writeString(status.toString());
-        parcel.writeString(profileImage);
-        parcel.writeString(type.toString());
-    }
-
-    public static final Creator<Pet> CREATOR = new Creator<Pet>() {
-        @Override
-        public Pet createFromParcel(Parcel in) {
-            return new Pet(in);
-        }
-
-        @Override
-        public Pet[] newArray(int size) {
-            return new Pet[size];
-        }
-    };
 }

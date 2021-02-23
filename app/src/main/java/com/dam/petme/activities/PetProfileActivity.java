@@ -1,6 +1,9 @@
 package com.dam.petme.activities;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +14,7 @@ import android.widget.TextView;
 import com.dam.petme.R;
 import com.dam.petme.model.Pet;
 import com.dam.petme.model.User;
+import com.dam.petme.viewModel.PetViewModel;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +36,8 @@ public class PetProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pet_profile);
 
 
+        String petId = (String) getIntent().getExtras().get("petId");
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
         genderTextView = findViewById(R.id.genderTextView);
         weightTextView = findViewById(R.id.weightTextView);
@@ -45,25 +51,13 @@ public class PetProfileActivity extends AppCompatActivity {
         contactResponsableButton = findViewById(R.id.contactResponsableButton);
         addToFavouriteButton = findViewById(R.id.addToFavouriteButton);
 
-        //String petId = mDatabase.child("pets").child().getKey();
+
         mDatabase.child("pets").child(petId).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
                 Log.d("firebase", String.valueOf(dataSnapshot.getValue()));
                 Pet pet = dataSnapshot.getValue(Pet.class);
-                if(pet.getName()!=null) petNameTextView.setText(pet.getName());
-                else petNameTextView.setText("Nombre desconocido");
-                if(pet.getAge()!=null) petAgeTextView.setText(String.valueOf(pet.getAge()));
-                else petAgeTextView.setText("Edad desconocida");
-                genderTextView.setText(pet.getGender().toString().toUpperCase());
-                if(pet.getWeight()!=null) weightTextView.setText(String.valueOf(pet.getWeight()));
-                else weightTextView.setText("Peso desconocido");
-                cityTextView.setText(pet.getCity()+", "+pet.getProvince());
-                descriptionTextView.setText(pet.getDescription());
-                if(pet.getRace()!=null) raceTextView.setText(pet.getRace());
-                else raceTextView.setText("Raza desconocida");
-                stateTextView.setText(pet.getStatus().toString());
-                //TODO completar el responsable
+                setPetFields(pet);
             }
         }).addOnCanceledListener(new OnCanceledListener() {
             @Override
@@ -86,5 +80,38 @@ public class PetProfileActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void setPetFields(Pet pet) {
+        if(pet.getName()!=null) petNameTextView.setText(pet.getName());
+        else petNameTextView.setText("Nombre desconocido");
+        if(pet.getAge()!=null) petAgeTextView.setText(String.valueOf(pet.getAge()));
+        else petAgeTextView.setText("Edad desconocida");
+        genderTextView.setText(pet.getGender().toString());
+        if(pet.getWeight()!=null) weightTextView.setText(String.valueOf(pet.getWeight()));
+        else weightTextView.setText("Peso desconocido");
+        cityTextView.setText(pet.getCity()+", "+pet.getProvince());
+        descriptionTextView.setText(pet.getDescription());
+        if(pet.getRace()!=null) raceTextView.setText(pet.getRace());
+        else raceTextView.setText("Raza desconocida");
+        stateTextView.setText(pet.getStatus().toString());
+
+        setResponsable(pet);
+    }
+
+    public void setResponsable(Pet pet) {
+        mDatabase.child("users").child(pet.getResponsableId()).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+            @Override
+            public void onSuccess(DataSnapshot dataSnapshot) {
+                Log.d("firebase", String.valueOf(dataSnapshot.getValue()));
+                User user = dataSnapshot.getValue(User.class);
+                responsableTextView.setText(user.getName() + " " + user.getLastName());
+            }
+        }).addOnCanceledListener(new OnCanceledListener() {
+            @Override
+            public void onCanceled() {
+                Log.e("firebase", "Error getting data");
+            }
+        });
     }
 }
