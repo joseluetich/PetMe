@@ -84,12 +84,7 @@ public class LogInActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("FB/Auth", "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                //Intent intent = new Intent(LogInActivity.this, HomeActivity.class);
-                                //startActivity(intent);
-                                Intent intent = new Intent(LogInActivity.this, AddPetActivity.class);
-                                intent.putExtra("status", PetStatus.FOUND);
-                                //TODO cambiar from a la actividad llamante
-                                intent.putExtra("from","LogInActivity");
+                                Intent intent = new Intent(LogInActivity.this, HomeActivity.class);
                                 startActivity(intent);
 
                             } else {

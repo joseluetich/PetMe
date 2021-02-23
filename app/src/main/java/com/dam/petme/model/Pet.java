@@ -69,6 +69,16 @@ public class Pet implements Parcelable {
         this.id = id;
     }
 
+    @PropertyName("key")
+    public Long getKey() {
+        return Long.valueOf(id);
+    }
+
+    @PropertyName("key")
+    public void setKey(Long id) {
+        this.id = String.valueOf(id);
+    }
+
     public String getName() {
         return name;
     }

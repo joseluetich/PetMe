@@ -2,26 +2,21 @@ package com.dam.petme.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.dam.petme.adapters.PetCardRecyclerViewAdapter;
 import com.dam.petme.R;
-import com.dam.petme.dummy.DummyContent;
+import com.dam.petme.activities.LostPetsActivity;
+import com.dam.petme.adapters.PetCardRecyclerViewAdapter;
 import com.dam.petme.model.Pet;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -33,6 +28,7 @@ public class PetCardFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private ArrayList<Pet> pets = new ArrayList<>();
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -57,6 +53,9 @@ public class PetCardFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             pets = getArguments().getParcelableArrayList("petsList");
+
+            System.out.println(pets);
+            System.out.println(pets.size());
         }
     }
 
@@ -77,6 +76,18 @@ public class PetCardFragment extends Fragment {
 
             recyclerView.setAdapter(new PetCardRecyclerViewAdapter(pets));
         }
+
+        ((LostPetsActivity) getActivity()).setFragmentRefreshListener(new LostPetsActivity.FragmentRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // your method
+                if (getArguments() != null) {
+                    pets = getArguments().getParcelableArrayList("petsList");
+                    System.out.println(pets);
+                    System.out.println(pets.size());
+                }
+            }
+        });
         return view;
     }
 }
