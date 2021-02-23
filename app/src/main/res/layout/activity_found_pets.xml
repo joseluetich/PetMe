@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/full_white"
-        tools:context=".activities.DonatePetActivity">
+        tools:context=".activities.FoundPetsActivity">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/foundPetsToolbar"

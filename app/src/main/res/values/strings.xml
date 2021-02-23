@@ -67,4 +67,11 @@
     <string name="confirmLocation">Confirmar</string>
     <string name="selectLocation">Seleccione la ubicación</string>
 
+    <!--Pet profile-->
+    <string name="weight">Peso</string>
+    <string name="deletePetProfile">Dar de baja perfil</string>
+    <string name="contactResponsable">Contactar al responsable</string>
+    <string name="addToFavourites">Agregar a favoritos</string>
+    <string name="responsable">Publicado por</string>
+
 </resources>

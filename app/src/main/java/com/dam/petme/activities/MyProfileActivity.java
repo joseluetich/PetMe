@@ -28,7 +28,8 @@ public class MyProfileActivity extends AppCompatActivity {
     Button myCollectionButton;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-    private TextView usernameTextView, ageTextView, cityProfileTextView, emailProfileTextView;
+    private TextView usernameTextView, ageTextView, cityProfileTextView, emailProfileTextView, phoneTextView,
+            descriptionTextView, workSituationTextView;
 
 
     @Override
@@ -47,6 +48,7 @@ public class MyProfileActivity extends AppCompatActivity {
         ageTextView = findViewById(R.id.ageTextView);
         cityProfileTextView = findViewById(R.id.cityProfileTextView);
         emailProfileTextView = findViewById(R.id.emailProfileTextView);
+        phoneTextView = findViewById(R.id.phoneTextView);
 
         //TODO Usar listener para escuchar los cambios on edit
         mDatabase.child("users").child(userFb.getUid()).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
@@ -60,6 +62,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 ageTextView.setText((age.getYear() - 70) + " años");
                 cityProfileTextView.setText(user.getCity());
                 emailProfileTextView.setText(user.getEmail());
+                phoneTextView.setText("Telefono desconocido");
             }
         }).addOnCanceledListener(new OnCanceledListener() {
             @Override

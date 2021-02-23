@@ -12,7 +12,7 @@
         android:clickable="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        tools:context=".activities.CreateAccountActivity">
+        tools:context=".activities.AddPetActivity">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/uploadFoundPetToolbar"
