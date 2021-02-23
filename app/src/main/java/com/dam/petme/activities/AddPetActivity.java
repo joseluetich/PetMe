@@ -1,6 +1,9 @@
 package com.dam.petme.activities;
 
-import android.app.DatePickerDialog;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,29 +19,24 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import com.dam.petme.R;
-import com.dam.petme.fragments.DatePickerFragment;
-import com.dam.petme.model.User;
+import com.dam.petme.model.Gender;
+import com.dam.petme.model.Pet;
+import com.dam.petme.model.PetStatus;
+import com.dam.petme.model.PetType;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -54,46 +52,53 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-public class CreateAccountActivity extends AppCompatActivity {
+public class AddPetActivity extends AppCompatActivity {
 
     static final int CAMARA_REQUEST = 1;
     static final int GALERIA_REQUEST = 2;
-    Toolbar createAccountToolbar;
-    TextInputLayout birthDateTextInputLayout, lastNameTextInputLayout, nameTextInputLayout, emailTextInputLayout,
-            passwordTextInputLayout;
-    EditText birthdateEditText;
-    Spinner citySpinner, provinceSpinner;
-    Button createAccountButton, takePhotoButton, uploadPhotoButton;
-    User user;
+    static final int MAP_CODE = 3;
+    Toolbar uploadFoundPetToolbar;
+    TextInputLayout nameTextInputLayout, raceTextInputLayout, descriptionTextInputLayout;
+    Spinner provinceSpinner, citySpinner, genderSpinner, typeSpinner;
+    Button locationButton, uploadFoundPetButton, takePhotoButton, uploadPhotoButton;
+    TextView uploadFoundPetTextView, errorPhotoTextView;
     ArrayList<String> cities = new ArrayList<>();
     ArrayList<String> provinces = new ArrayList<>();
-    String lastName, name, email, password, birthdate, province, city;
-    Date birth;
+    ArrayList<String> genders = new ArrayList<>();
+    ArrayList<String> types = new ArrayList<>();
+    String name, race, description, province, city;
+    Pet pet;
+    Gender gender;
+    PetType type;
     byte[] photo;
-    StorageReference userPhotoRef, storageRef;
+    StorageReference petPhotoRef, storageRef;
     FirebaseStorage storage;
     ImageView photoImageView;
-
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    PetStatus status;
+    Double latitude, longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_account);
+        setContentView(R.layout.activity_add_pet);
 
-        createAccountToolbar = findViewById(R.id.createAccountToolbar);
-        setSupportActionBar(createAccountToolbar);
+        if(getIntent().getExtras().get("status")!=null)
+            status = (PetStatus) getIntent().getExtras().get("status");
+        if(getIntent().getExtras().get("latitude")!=null)
+            latitude = (Double) getIntent().getExtras().get("latitude");
+        if(getIntent().getExtras().get("longitude")!=null)
+            longitude = (Double) getIntent().getExtras().get("longitude");
+
+        System.out.println("Status: "+status);
+        System.out.println("Latitud: "+latitude);
+        System.out.println("Longitud: "+longitude);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -105,36 +110,45 @@ public class CreateAccountActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
-        lastNameTextInputLayout = findViewById(R.id.lastNameTextInputLayout);
+        uploadFoundPetToolbar = findViewById(R.id.uploadFoundPetToolbar);
+        setSupportActionBar(uploadFoundPetToolbar);
+        uploadFoundPetToolbar.setTitle("Mascotas "+status.toStringPlural());
+
         nameTextInputLayout = findViewById(R.id.nameTextInputLayout);
-        emailTextInputLayout = findViewById(R.id.emailTextInputLayout);
-        passwordTextInputLayout = findViewById(R.id.passwordTextInputLayout);
-        birthDateTextInputLayout = findViewById(R.id.birthDateTextInputLayout);
-        citySpinner = findViewById(R.id.citySpinner);
+        raceTextInputLayout = findViewById(R.id.raceTextInputLayout);
+        genderSpinner = findViewById(R.id.genderSpinner);
+        typeSpinner = findViewById(R.id.typeSpinner);
+        descriptionTextInputLayout = findViewById(R.id.descriptionTextInputLayout);
         provinceSpinner = findViewById(R.id.provinceSpinner);
-        birthdateEditText = findViewById(R.id.birthDateEditText);
-        createAccountButton = findViewById(R.id.createAccountButton);
+        citySpinner = findViewById(R.id.citySpinner);
+        locationButton = findViewById(R.id.uploadLocationFoundPetButton);
+        uploadFoundPetButton = findViewById(R.id.uploadFoundPetButton);
         takePhotoButton = findViewById(R.id.takePhotoButton);
         uploadPhotoButton = findViewById(R.id.uploadPhotoButton);
-        photoImageView = findViewById(R.id.userProfileImageView);
+        photoImageView = findViewById(R.id.petImageView);
+        uploadFoundPetTextView = findViewById(R.id.uploadFoundPetTextView);
+        errorPhotoTextView = findViewById(R.id.errorPhotoTextView);
+
+        uploadFoundPetTextView.setText("Agregar Mascota "+status.toString());
 
         photoImageView.setVisibility(View.GONE);
 
-        createAccountToolbar = findViewById(R.id.createAccountToolbar);
-        setSupportActionBar(createAccountToolbar);
+        mandatoryFieldValidation(descriptionTextInputLayout);
 
-        birthdateEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDatePickerDialog();
-            }
-        });
+        genders.add("Seleccione");
+        genders.add("Macho");
+        genders.add("Hembra");
+        genders.add("Desconocido");
+        ArrayAdapter<String> genderAdapter = new ArrayAdapter<String>(AddPetActivity.this, android.R.layout.simple_spinner_item, genders);
+        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genderSpinner.setAdapter(genderAdapter);
 
-        mandatoryFieldValidation(nameTextInputLayout);
-        mandatoryFieldValidation(lastNameTextInputLayout);
-        mandatoryFieldValidation(emailTextInputLayout);
-        mandatoryFieldValidation(passwordTextInputLayout);
-        mandatoryFieldValidation(birthDateTextInputLayout);
+        types.add("Seleccione");
+        types.add("Perro");
+        types.add("Gato");
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<String>(AddPetActivity.this, android.R.layout.simple_spinner_item, types);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeSpinner.setAdapter(typeAdapter);
 
         try {
             JSONArray provincesArray = new JSONArray(loadJSONFromAsset());
@@ -170,7 +184,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                         citySpinner.setEnabled(true);
                     }
                     cities.add(0, getResources().getString(R.string.select));
-                    ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(CreateAccountActivity.this, android.R.layout.simple_spinner_item, cities);
+                    ArrayAdapter<String> cityAdapter = new ArrayAdapter<String>(AddPetActivity.this, android.R.layout.simple_spinner_item, cities);
                     cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     citySpinner.setAdapter(cityAdapter);
                 } catch (JSONException e) {
@@ -183,6 +197,10 @@ public class CreateAccountActivity extends AppCompatActivity {
 
             }
         });
+
+        ArrayAdapter<String> provinceAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, provinces);
+        provinceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        provinceSpinner.setAdapter(provinceAdapter);
 
         takePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,94 +218,40 @@ public class CreateAccountActivity extends AppCompatActivity {
             }
         });
 
-        ArrayAdapter<String> provinceAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, provinces);
-        provinceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        provinceSpinner.setAdapter(provinceAdapter);
-
-        createAccountButton.setOnClickListener(new View.OnClickListener() {
+        locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lastName = lastNameTextInputLayout.getEditText().getText().toString();
+                Intent intent = new Intent(AddPetActivity.this, PetLocationActivity.class);
+                intent.putExtra("status", status);
+                startActivityForResult(intent, MAP_CODE);
+            }
+        });
+
+        uploadFoundPetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
                 name = nameTextInputLayout.getEditText().getText().toString();
-                email = emailTextInputLayout.getEditText().getText().toString();
-                password = passwordTextInputLayout.getEditText().getText().toString();
-                birthdate = birthdateEditText.getText().toString();
+                description = descriptionTextInputLayout.getEditText().getText().toString();
+                race = raceTextInputLayout.getEditText().getText().toString();
                 province = provinceSpinner.getSelectedItem().toString();
                 city = citySpinner.getSelectedItem().toString();
 
-                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_AR"));
-                try {
-                    birth = dateFormat.parse(birthdate);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                if(genderSpinner.getSelectedItem().toString().equals("Hembra")) gender = Gender.FEMALE;
+                if(genderSpinner.getSelectedItem().toString().equals("Macho")) gender = Gender.MALE;
+                if(genderSpinner.getSelectedItem().toString().equals("Desconocido")) gender = Gender.UNKNOWN;
 
-                if (validNewUser()) {
-                    user = new User(lastName, name, email, password, birth, province, city);
+                if(typeSpinner.getSelectedItem().toString().equals("Perro")) type = PetType.DOG;
+                if(typeSpinner.getSelectedItem().toString().equals("Gato")) type = PetType.CAT;
+
+                if (validateAllMandatoryFields()) {
+                    pet = new Pet(name, race, null, null, description, gender, province, city, status, type);
+                    pet.setLatitude(String.valueOf(latitude));
+                    pet.setLongitude(String.valueOf(longitude));
                     savePhoto();
-                    createUserInFireBase(user);
                 }
             }
         });
-
-    }
-
-    private void createUserInFireBase(User user) {
-        mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("FB/Auth", "createUserWithEmail:success");
-                            FirebaseUser userFb = mAuth.getCurrentUser();
-                            // Create new post at /user-posts/$userid/$postid and at
-                            // /posts/$postid simultaneously
-
-                            Map<String, Object> userValues = user.toMap();
-                            mDatabase.child("users").child(userFb.getUid())
-                                    .setValue(userValues).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    // Write was successful!
-                                    Log.d("FB/DataBase", "saveUser:success");
-                                    loginUser(user.getEmail(), user.getPassword());
-                                }
-                            })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            // Write failed
-                                            Log.w("FB/DataBase", "saveUser:failure", e);
-                                        }
-                                    });
-
-                            Toast.makeText(CreateAccountActivity.this, "Se ha creado la cuenta exitosamente", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("FB/Auth", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(CreateAccountActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-    }
-
-    private void showDatePickerDialog() {
-        DatePickerFragment newFragment = DatePickerFragment.newInstance(new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                // +1 because January is zero
-                final String selectedDate = twoDigits(day) + "/" + twoDigits(month + 1) + "/" + year;
-                birthdateEditText.setText(selectedDate);
-            }
-        });
-        newFragment.show(getSupportFragmentManager(), "datePicker");
-    }
-
-    private String twoDigits(int n) {
-        return (n <= 9) ? ("0" + n) : String.valueOf(n);
     }
 
     public String loadJSONFromAsset() { //Lee y retorna el json como string
@@ -313,33 +277,19 @@ public class CreateAccountActivity extends AppCompatActivity {
     public boolean validateAllMandatoryFields() {
         boolean allCompleted = true;
 
-        if (lastName == null || lastName.isEmpty()) {
-            lastNameTextInputLayout.setHelperTextEnabled(false);
-            lastNameTextInputLayout.setError(getString(R.string.mandatoryField));
+        if (gender == null || gender.toString().toLowerCase().equals(getResources().getString(R.string.select).toLowerCase())) {
+            ((TextView) genderSpinner.getSelectedView()).setError(" ");
             allCompleted = false;
         }
 
-        if (name == null || name.isEmpty()) {
-            nameTextInputLayout.setHelperTextEnabled(false);
-            nameTextInputLayout.setError(getString(R.string.mandatoryField));
+        if (type == null || type.toString().toLowerCase().equals(getResources().getString(R.string.select).toLowerCase())) {
+            ((TextView) typeSpinner.getSelectedView()).setError(" ");
             allCompleted = false;
         }
 
-        if (email == null || email.isEmpty()) {
-            emailTextInputLayout.setHelperTextEnabled(false);
-            emailTextInputLayout.setError(getString(R.string.mandatoryField));
-            allCompleted = false;
-        }
-
-        if (password == null || password.isEmpty()) {
-            passwordTextInputLayout.setHelperTextEnabled(false);
-            passwordTextInputLayout.setError(getString(R.string.mandatoryField));
-            allCompleted = false;
-        }
-
-        if (birthdate == null || birthdate.isEmpty()) {
-            birthDateTextInputLayout.setHelperTextEnabled(false);
-            birthDateTextInputLayout.setError(getString(R.string.mandatoryField));
+        if (description == null || description.isEmpty()) {
+            descriptionTextInputLayout.setHelperTextEnabled(false);
+            descriptionTextInputLayout.setError(getString(R.string.mandatoryField));
             allCompleted = false;
         }
 
@@ -350,6 +300,13 @@ public class CreateAccountActivity extends AppCompatActivity {
 
         if (city == null || city.isEmpty() || city.equals(getResources().getString(R.string.select))) {
             ((TextView) citySpinner.getSelectedView()).setError(" ");
+            allCompleted = false;
+        }
+
+        if (photo == null) {
+            //takePhotoButton.setError(getResources().getString(R.string.mustAddAPhoto));
+            //uploadPhotoButton.setError(getResources().getString(R.string.mustAddAPhoto));
+            errorPhotoTextView.setVisibility(View.VISIBLE);
             allCompleted = false;
         }
 
@@ -396,6 +353,10 @@ public class CreateAccountActivity extends AppCompatActivity {
                 photoImageView.setVisibility(View.VISIBLE); //preview
                 photoImageView.setImageBitmap(imageBitmap);
 
+                if (photo != null) {
+                    errorPhotoTextView.setVisibility(View.GONE);
+                }
+
             } else if (requestCode == GALERIA_REQUEST) {
                 Uri selectedImage = data.getData();
                 InputStream is;
@@ -410,8 +371,18 @@ public class CreateAccountActivity extends AppCompatActivity {
 
                     photoImageView.setImageBitmap(bitmap);
                     photoImageView.setVisibility(View.VISIBLE);
+
+                    if (photo != null) {
+                        errorPhotoTextView.setVisibility(View.GONE);
+                    }
+
                 } catch (FileNotFoundException e) {
                 }
+            } else if(requestCode == MAP_CODE) {
+                //Obtengo la latitud y longitud seleccionadas
+                latitude = data.getDoubleExtra("latitude",0d);
+                longitude = data.getDoubleExtra("longitude",0d);
+                System.out.println("latitud2: "+latitude+ " longitud2: "+longitude);
             }
         }
 
@@ -420,13 +391,13 @@ public class CreateAccountActivity extends AppCompatActivity {
     public void savePhoto() {
         final Context context = this;
 
+        pet.setId(String.valueOf(System.currentTimeMillis()));
+
         // Creamos una referencia a 'images/plato_id.jpg'
-        userPhotoRef = storageRef.child("users/" + user.getEmail() + "-profile.jpg");
+        petPhotoRef = storageRef.child("pets/" + pet.getId() + "-profile.jpg");
 
         // Cualquiera de los tres métodos tienen la misma implementación, se debe utilizar el que corresponda
-        UploadTask uploadTask = userPhotoRef.putBytes(photo);
-        // UploadTask uploadTask = platosImagesRef.putFile(file);
-        // UploadTask uploadTask = platosImagesRef.putStream(stream);
+        UploadTask uploadTask = petPhotoRef.putBytes(photo);
 
         // Registramos un listener para saber el resultado de la operación
         Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -438,7 +409,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                 }
 
                 // Continuamos con la tarea para obtener la URL
-                return userPhotoRef.getDownloadUrl();
+                return petPhotoRef.getDownloadUrl();
             }
         }).addOnCompleteListener(new OnCompleteListener<Uri>() {
             @Override
@@ -446,7 +417,8 @@ public class CreateAccountActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     // URL de descarga del archivo
                     Uri downloadUri = task.getResult();
-                    user.setPhoto(downloadUri.toString());
+                    pet.setProfileImage("pets/" + pet.getId() + "-profile.jpg");
+                    createPetInFireBase(pet);
                 } else {
                     Toast.makeText(context, "Error al cargar la imagen", Toast.LENGTH_LONG).show();
                 }
@@ -454,28 +426,24 @@ public class CreateAccountActivity extends AppCompatActivity {
         });
     }
 
-    private void loginUser(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this,
-                        new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d("FB/Auth", "signInWithEmail:success");
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    Intent intent = new Intent(CreateAccountActivity.this, HomeActivity.class);
-                                    startActivity(intent);
+    private void createPetInFireBase(Pet pet) {
+        Map<String, Object> petValues = pet.toMap();
+        mDatabase.child("pets").child(pet.getId())
+                .setValue(petValues).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // Write was successful!
+                Log.d("FB/DataBase", "savePet:success");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Write failed
+                Log.w("FB/DataBase", "savePet:failure", e);
+            }
+        });
 
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w("FB/Auth", "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(CreateAccountActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
+        Toast.makeText(AddPetActivity.this, "Se ha agregado la mascota exitosamente", Toast.LENGTH_SHORT).show();
 
-                            }
-                        });
     }
-
 }
