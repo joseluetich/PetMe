@@ -264,14 +264,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:layout_constraintWidth_max="100dp"
-            app:layout_constraintWidth_min="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_max="100dp"
             app:layout_constraintHeight_min="100dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/errorPhotoTextView"
+            app:layout_constraintWidth_max="100dp"
+            app:layout_constraintWidth_min="100dp"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/errorPhotoTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/mustAddAPhoto"
+            android:textAlignment="center"
+            android:textColor="@color/error_red"
+            android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-            tools:srcCompat="@tools:sample/avatars" />
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">PetMe</string>
     <string name="mandatoryField">* Campo obligatorio</string>
+    <string name="google_maps_key">AIzaSyDqkwJf2lsY0qippCymd597EfrqesCajoI</string>
 
     <!--Login-->
     <string name="slogan">Encuentra a tu nuevo mejor amigo</string>
@@ -47,7 +48,7 @@
     <string name="myLostPets">Mis mascotas perdidas</string>
     <string name="myVeterinaries">Mis veterinarias</string>
 
-    <!--Upload found pet-->
+    <!--Add pet-->
     <string name="uploadFoundPets">Agregar Mascota encontrada</string>
     <string name="race">Raza</string>
     <string name="gender">Género</string>
@@ -55,6 +56,10 @@
     <string name="foundLocation">Cargar ubicación</string>
     <string name="uploadPet">Cargar mascota</string>
     <string name="type">Tipo</string>
+    <string name="mustAddAPhoto">* Debe agregar una foto</string>
 
+    <!--Pet location-->
+    <string name="confirmLocation">Confirmar</string>
+    <string name="selectLocation">Seleccione la ubicación</string>
 
 </resources>

@@ -21,4 +21,10 @@ public enum PetStatus {
         return "En adopción";
     }
 
+    public String toStringPast(){
+        if(this == LOST) return "Perdió";
+        if(this == FOUND) return "Encontró";
+        return "Encuentra";
+    }
+
 }

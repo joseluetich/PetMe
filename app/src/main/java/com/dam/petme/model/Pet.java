@@ -4,6 +4,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
@@ -24,6 +25,8 @@ public class Pet {
     private PetStatus status;
     private PetType type;
     private String profileImage;
+    private String latitude;
+    private String longitude;
 
     public Pet() {
     }
@@ -54,7 +57,8 @@ public class Pet {
         result.put("city", city);
         result.put("description", description);
         result.put("profile_image", profileImage);
-
+        result.put("latitude",latitude);
+        result.put("longitude",longitude);
         return result;
     }
 
@@ -156,4 +160,19 @@ public class Pet {
         this.profileImage = profileImage;
     }
 
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
 }
