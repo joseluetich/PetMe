@@ -19,7 +19,9 @@ public class User {
     private String province;
     private String city;
     private String photo;
-
+    private String description;
+    private String workSituation;
+    private String phone;
 
     public User() {
     }
@@ -117,5 +119,29 @@ public class User {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getWorkSituation() {
+        return workSituation;
+    }
+
+    public void setWorkSituation(String workSituation) {
+        this.workSituation = workSituation;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

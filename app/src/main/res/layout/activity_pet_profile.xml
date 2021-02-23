@@ -77,7 +77,6 @@
                             android:layout_height="wrap_content"
                             android:background="@color/yellow_mustard"
                             android:gravity="center_horizontal"
-                            android:text="ESTADO"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -101,7 +100,6 @@
                             android:layout_marginEnd="16dp"
                             android:layout_weight="1"
                             android:gravity="center_horizontal"
-                            android:text="Oscar"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -112,7 +110,6 @@
                             android:layout_marginTop="16dp"
                             android:layout_weight="1"
                             android:gravity="center|center_horizontal"
-                            android:text="Edad desconocida"
                             android:textSize="18sp" />
                     </LinearLayout>
 
@@ -196,7 +193,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="8dp"
-                            android:text="Raza" />
+                            android:text="@string/unknownRace" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -237,8 +234,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
-                            android:layout_marginEnd="8dp"
-                            android:text="Género" />
+                            android:layout_marginEnd="8dp" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -279,8 +275,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
-                            android:layout_marginEnd="8dp"
-                            android:text="Peso" />
+                            android:layout_marginEnd="8dp" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -321,8 +316,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
-                            android:layout_marginEnd="8dp"
-                            android:text="Ciudad" />
+                            android:layout_marginEnd="8dp" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -364,8 +358,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
-                            android:layout_marginEnd="8dp"
-                            android:text="Descripcion" />
+                            android:layout_marginEnd="8dp" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -407,8 +400,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
-                            android:layout_marginEnd="8dp"
-                            android:text="Usuario" />
+                            android:layout_marginEnd="8dp" />
                     </LinearLayout>
 
                 </LinearLayout>
