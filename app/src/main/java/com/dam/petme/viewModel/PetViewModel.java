@@ -22,7 +22,7 @@ import java.util.List;
 
 public class PetViewModel extends ViewModel {
 
-    private final MutableLiveData<Pet> selectedItem = new MutableLiveData<Pet>();
+    public MutableLiveData<Pet> selectedPet = new MutableLiveData<Pet>();
     private MutableLiveData<List<Pet>> pets;
     private DatabaseReference mDatabase;
 
@@ -34,12 +34,18 @@ public class PetViewModel extends ViewModel {
         return pets;
     }
 
-    public void selectItem(Pet item) {
-        selectedItem.setValue(item);
+    public void selectPet(Pet pet) {
+        System.out.println("seleccionn "+pet);
+        selectedPet.setValue(pet);
+        //selectedPet = new MutableLiveData<Pet>(pet);
     }
 
-    public LiveData<Pet> getSelectedItem() {
-        return selectedItem;
+    public LiveData<Pet> getSelectedPet() {
+        if(selectedPet == null) {
+            selectedPet = new MutableLiveData<Pet>();
+        }
+        System.out.println(selectedPet);
+        return selectedPet;
     }
 
     public void setPets(ArrayList<Pet> petArrayList) {

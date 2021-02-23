@@ -1,5 +1,6 @@
 package com.dam.petme.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -72,14 +73,12 @@ public class PetCardFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new PetCardRecyclerViewAdapter(this.pets));
             PetViewModel model = new ViewModelProvider(this).get(PetViewModel.class);
+            recyclerView.setAdapter(new PetCardRecyclerViewAdapter(this.pets,model));
             model.getPetsByStatus("FOUND").observe(requireActivity(), pets -> {
                 // update UI
-                System.out.println("Fragment");
-                System.out.println(pets);
                 this.pets = (ArrayList<Pet>) pets;
-                recyclerView.setAdapter(new PetCardRecyclerViewAdapter(this.pets));
+                recyclerView.setAdapter(new PetCardRecyclerViewAdapter(this.pets,model));
                 //recyclerView.getAdapter().notifyDataSetChanged();
             });
         }

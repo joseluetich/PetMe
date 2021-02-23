@@ -58,7 +58,7 @@ public class LogInActivity extends AppCompatActivity {
                 password = passwordLogInTextInputLayout.getEditText().getText().toString();
 
                 if (validUser()) {
-                    Toast.makeText(LogInActivity.this, "Ingresa", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(LogInActivity.this, "Ingresa", Toast.LENGTH_SHORT).show();
 
                 }
             }

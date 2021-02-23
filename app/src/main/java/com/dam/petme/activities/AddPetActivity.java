@@ -40,6 +40,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -88,6 +89,7 @@ public class AddPetActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     PetStatus status;
     Double latitude, longitude;
+    FirebaseUser userFb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +109,7 @@ public class AddPetActivity extends AppCompatActivity {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        userFb = mAuth.getCurrentUser();
 
         //Get Database
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -432,6 +435,7 @@ public class AddPetActivity extends AppCompatActivity {
 
     private void createPetInFireBase() {
         pet.setId(mDatabase.child("pets").push().getKey());
+        pet.setResponsableId(userFb.getUid());
         Map<String, Object> petValues = pet.toMap();
         mDatabase.child("pets").child(pet.getId())
                 .setValue(petValues).addOnSuccessListener(new OnSuccessListener<Void>() {
