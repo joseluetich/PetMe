@@ -93,7 +93,7 @@ public class AddPetActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     PetStatus petStatus;
     String status;
-    Double latitude, longitude;
+    Double latitude = null, longitude = null;
     FirebaseUser userFb;
 
     @Override
@@ -261,8 +261,10 @@ public class AddPetActivity extends AppCompatActivity {
 
                 if (validateAllMandatoryFields()) {
                     pet = new Pet(name, race, null, null, description, gender, province, city, petStatus, type);
-                    pet.setLatitude(String.valueOf(latitude));
-                    pet.setLongitude(String.valueOf(longitude));
+                    if(latitude==null) pet.setLatitude(null);
+                    else pet.setLatitude(String.valueOf(latitude));
+                    if(longitude==null)pet.setLongitude(null);
+                    else pet.setLongitude(String.valueOf(longitude));
                     createPetInFireBase();
                 }
             }

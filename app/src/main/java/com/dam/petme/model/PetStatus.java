@@ -27,4 +27,11 @@ public enum PetStatus {
         return "Encuentra";
     }
 
+    public String toStringEnglish(){
+        if(this == LOST) return "LOST";
+        if(this == FOUND) return "FOUND";
+        if(this == ADOPTED) return "ADOPTED";
+        return "TO_BE_ADOPTED";
+    }
+
 }
