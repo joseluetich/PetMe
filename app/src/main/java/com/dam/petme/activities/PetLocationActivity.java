@@ -42,7 +42,8 @@ public class PetLocationActivity extends AppCompatActivity implements GoogleMap.
     Button confirmLocationButton;
     LatLng location;
     Marker m = null;
-    PetStatus status;
+    PetStatus petStatus;
+    String status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +61,10 @@ public class PetLocationActivity extends AppCompatActivity implements GoogleMap.
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        status = (PetStatus) getIntent().getExtras().get("status");
+        status = (String) getIntent().getExtras().get("status");
+        petStatus = PetStatus.valueOf(status);
 
-        descriptionLocationTextView.setText("Situar en el mapa la ubicación en la que se "+status.toStringPast()+" la mascota");
+        descriptionLocationTextView.setText("Situar en el mapa la ubicación en la que se "+petStatus.toStringPast()+" la mascota");
 
         final Context context = this;
         confirmLocationButton.setOnClickListener(new View.OnClickListener() {
@@ -109,15 +111,15 @@ public class PetLocationActivity extends AppCompatActivity implements GoogleMap.
                 if(m == null) { // si todavia no existe
                     m = map.addMarker(new MarkerOptions()
                             .position(latLng)
-                            .title("Mascota "+status.toString().toLowerCase()+" aquí")
+                            .title("Mascota "+petStatus.toString().toLowerCase()+" aquí")
                             .draggable(false));
-                    if(status.equals(PetStatus.LOST)) {
+                    if(petStatus.equals(PetStatus.LOST)) {
                         m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                     }
-                    if(status.equals(PetStatus.FOUND)) {
+                    if(petStatus.equals(PetStatus.FOUND)) {
                         m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                     }
-                    if(status.equals(PetStatus.ADOPTED)) {
+                    if(petStatus.equals(PetStatus.ADOPTED)) {
                         m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                     }
                 }

@@ -12,13 +12,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PetMe">
-        <activity android:name=".activities.PetProfileActivity" />
         <activity
-            android:name=".activities.PetLocationActivity"
-            android:parentActivityName=".activities.AddPetActivity">
+            android:name=".activities.LostPetsLocationActivity"
+            android:parentActivityName=".activities.FoundPetsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.AddPetActivity" />
+                android:value=".activities.FoundPetsActivity" />
+        </activity>
+        <activity
+            android:name=".activities.PetProfileActivity"
+            android:parentActivityName=".activities.FoundPetsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.FoundPetsActivity" />
+        </activity>
+        <activity
+            android:name=".activities.PetLocationActivity"
+            android:parentActivityName=".activities.FoundPetsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.FoundPetsActivity" />
         </activity>
         <activity
             android:name=".activities.AddPetActivity"

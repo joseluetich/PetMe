@@ -170,6 +170,8 @@ public class Pet {
     }
 
     public void setLatitude(String latitude) {
+        if(latitude.equals("null"))
+            latitude = null;
         this.latitude = latitude;
     }
 
@@ -178,6 +180,8 @@ public class Pet {
     }
 
     public void setLongitude(String longitude) {
+        if(longitude.equals("null"))
+            longitude = null;
         this.longitude = longitude;
     }
 

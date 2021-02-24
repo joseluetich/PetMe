@@ -58,7 +58,6 @@ public class PetViewModel extends ViewModel {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // Do an asynchronous operation to fetch users.
         ArrayList<Pet> petsAux = new ArrayList();
-        System.out.println(status.getValue());
 
         Query myTopPostsQuery = mDatabase.child("pets").orderByChild("status").equalTo(status.getValue());
         myTopPostsQuery.addValueEventListener(new ValueEventListener() {
