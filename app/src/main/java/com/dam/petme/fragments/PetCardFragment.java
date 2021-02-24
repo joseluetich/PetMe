@@ -7,8 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,9 +28,7 @@ import java.util.ArrayList;
  */
 public class PetCardFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private ArrayList<Pet> pets = new ArrayList<>();
 
@@ -39,8 +39,6 @@ public class PetCardFragment extends Fragment {
     public PetCardFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static PetCardFragment newInstance(int columnCount) {
         PetCardFragment fragment = new PetCardFragment();
         Bundle args = new Bundle();
@@ -73,9 +71,9 @@ public class PetCardFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            PetViewModel model = new ViewModelProvider(this).get(PetViewModel.class);
+            PetViewModel model = new ViewModelProvider(getActivity()).get(PetViewModel.class);
             recyclerView.setAdapter(new PetCardRecyclerViewAdapter(this.pets,model));
-            model.getPetsByStatus("FOUND").observe(requireActivity(), pets -> {
+            model.pets.observe(requireActivity(), pets -> {
                 // update UI
                 this.pets = (ArrayList<Pet>) pets;
                 recyclerView.setAdapter(new PetCardRecyclerViewAdapter(this.pets,model));
@@ -83,18 +81,6 @@ public class PetCardFragment extends Fragment {
             });
         }
 
-
-        /*((LostPetsActivity) getActivity()).setFragmentRefreshListener(new LostPetsActivity.FragmentRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // your method
-                if (getArguments() != null) {
-                    pets = getArguments().getParcelableArrayList("petsList");
-                    System.out.println(pets);
-                    System.out.println(pets.size());
-                }
-            }
-        });*/
         return view;
     }
 

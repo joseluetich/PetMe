@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.dam.petme.R;
+import com.dam.petme.model.PetStatus;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -62,7 +63,8 @@ public class HomeActivity extends AppCompatActivity {
         adoptPetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, AdoptPetActivity.class);
+                Intent intent = new Intent(HomeActivity.this, LostPetsActivity.class);
+                intent.putExtra("status", "TO_BE_ADOPTED");
                 startActivity(intent);
             }
         });
@@ -78,7 +80,8 @@ public class HomeActivity extends AppCompatActivity {
         foundPetsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, FoundPetsActivity.class);
+                Intent intent = new Intent(HomeActivity.this, LostPetsActivity.class);
+                intent.putExtra("status", "FOUND");
                 startActivity(intent);
             }
         });
@@ -87,6 +90,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HomeActivity.this, LostPetsActivity.class);
+                intent.putExtra("status", "LOST");
                 startActivity(intent);
             }
         });
