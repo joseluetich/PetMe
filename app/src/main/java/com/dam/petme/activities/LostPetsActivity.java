@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,7 +37,7 @@ public class LostPetsActivity extends AppCompatActivity {
     Toolbar lostPetsToolbar;
     FloatingActionButton addButton;
     TextView titleTextView;
-    View petCardFragment;
+    Button mapButton;
     private DatabaseReference mDatabase;
 
     public PetViewModel petViewModel;
@@ -58,9 +59,13 @@ public class LostPetsActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        petCardFragment = findViewById(R.id.petsFragment);
         titleTextView = findViewById(R.id.titleTextView);
         addButton = findViewById(R.id.addButton);
+        mapButton = findViewById(R.id.mapViewButton);
+
+        if(status.equals("TO_BE_ADOPTED")) mapButton.setVisibility(View.GONE);
+
+
 
         setTitle();
 

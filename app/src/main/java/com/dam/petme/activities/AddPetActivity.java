@@ -264,10 +264,6 @@ public class AddPetActivity extends AppCompatActivity {
                     pet.setLatitude(String.valueOf(latitude));
                     pet.setLongitude(String.valueOf(longitude));
                     createPetInFireBase();
-                    new SimpleAsyncTask(uploadFoundPetButton).execute();
-                    Intent intent = new Intent(AddPetActivity.this, LostPetsActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
                 }
             }
         });
@@ -457,6 +453,7 @@ public class AddPetActivity extends AppCompatActivity {
                     Map<String, Object> childUpdates = new HashMap<>();
                     childUpdates.put("/pets/" + pet.getId(), pet.toMap());
                     mDatabase.updateChildren(childUpdates);
+                    new SimpleAsyncTask(uploadFoundPetButton).execute();
                     finish();
                 });
             }
