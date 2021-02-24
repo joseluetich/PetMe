@@ -12,7 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PetMe">
-
         <activity
             android:name=".activities.LostPetsLocationActivity"
             android:parentActivityName=".activities.FoundPetsActivity">
