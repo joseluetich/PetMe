@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
 import android.content.Context;
@@ -90,7 +91,8 @@ public class AddPetActivity extends AppCompatActivity {
     ImageView photoImageView;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
-    PetStatus status;
+    PetStatus petStatus;
+    String status;
     Double latitude, longitude;
     FirebaseUser userFb;
 
@@ -99,16 +101,14 @@ public class AddPetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_pet);
 
-        if(getIntent().getExtras().get("status")!=null)
-            status = (PetStatus) getIntent().getExtras().get("status");
-        if(getIntent().getExtras().get("latitude")!=null)
+        if (getIntent().getExtras().get("status") != null) {
+            status = (String) getIntent().getExtras().get("status");
+            petStatus = PetStatus.valueOf(status);
+        }
+        if (getIntent().getExtras().get("latitude") != null)
             latitude = (Double) getIntent().getExtras().get("latitude");
-        if(getIntent().getExtras().get("longitude")!=null)
+        if (getIntent().getExtras().get("longitude") != null)
             longitude = (Double) getIntent().getExtras().get("longitude");
-
-        System.out.println("Status: "+status);
-        System.out.println("Latitud: "+latitude);
-        System.out.println("Longitud: "+longitude);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -123,7 +123,7 @@ public class AddPetActivity extends AppCompatActivity {
 
         uploadFoundPetToolbar = findViewById(R.id.uploadFoundPetToolbar);
         setSupportActionBar(uploadFoundPetToolbar);
-        uploadFoundPetToolbar.setTitle("Mascotas "+status.toStringPlural().toLowerCase());
+        uploadFoundPetToolbar.setTitle("Mascotas "+petStatus.toStringPlural().toLowerCase());
 
         nameTextInputLayout = findViewById(R.id.nameTextInputLayout);
         raceTextInputLayout = findViewById(R.id.raceTextInputLayout);
@@ -140,11 +140,12 @@ public class AddPetActivity extends AppCompatActivity {
         uploadFoundPetTextView = findViewById(R.id.uploadFoundPetTextView);
         errorPhotoTextView = findViewById(R.id.errorPhotoTextView);
 
-        uploadFoundPetTextView.setText("Agregar Mascota "+status.toString());
+        uploadFoundPetTextView.setText("Agregar Mascota " + petStatus.toString());
 
         photoImageView.setVisibility(View.GONE);
 
         mandatoryFieldValidation(descriptionTextInputLayout);
+
 
         genders.add("Seleccione");
         genders.add("Macho");
@@ -248,15 +249,18 @@ public class AddPetActivity extends AppCompatActivity {
                 province = provinceSpinner.getSelectedItem().toString();
                 city = citySpinner.getSelectedItem().toString();
 
-                if(genderSpinner.getSelectedItem().toString().equals("Hembra")) gender = Gender.FEMALE;
-                if(genderSpinner.getSelectedItem().toString().equals("Macho")) gender = Gender.MALE;
-                if(genderSpinner.getSelectedItem().toString().equals("Desconocido")) gender = Gender.UNKNOWN;
+                if (genderSpinner.getSelectedItem().toString().equals("Hembra"))
+                    gender = Gender.FEMALE;
+                if (genderSpinner.getSelectedItem().toString().equals("Macho"))
+                    gender = Gender.MALE;
+                if (genderSpinner.getSelectedItem().toString().equals("Desconocido"))
+                    gender = Gender.UNKNOWN;
 
-                if(typeSpinner.getSelectedItem().toString().equals("Perro")) type = PetType.DOG;
-                if(typeSpinner.getSelectedItem().toString().equals("Gato")) type = PetType.CAT;
+                if (typeSpinner.getSelectedItem().toString().equals("Perro")) type = PetType.DOG;
+                if (typeSpinner.getSelectedItem().toString().equals("Gato")) type = PetType.CAT;
 
                 if (validateAllMandatoryFields()) {
-                    pet = new Pet(name, race, null, null, description, gender, province, city, status, type);
+                    pet = new Pet(name, race, null, null, description, gender, province, city, petStatus, type);
                     pet.setLatitude(String.valueOf(latitude));
                     pet.setLongitude(String.valueOf(longitude));
                     createPetInFireBase();
@@ -393,11 +397,10 @@ public class AddPetActivity extends AppCompatActivity {
 
                 } catch (FileNotFoundException e) {
                 }
-            } else if(requestCode == MAP_CODE) {
+            } else if (requestCode == MAP_CODE) {
                 //Obtengo la latitud y longitud seleccionadas
-                latitude = data.getDoubleExtra("latitude",0d);
-                longitude = data.getDoubleExtra("longitude",0d);
-                System.out.println("latitud2: "+latitude+ " longitud2: "+longitude);
+                latitude = data.getDoubleExtra("latitude", 0d);
+                longitude = data.getDoubleExtra("longitude", 0d);
             }
         }
 

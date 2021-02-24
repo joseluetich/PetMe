@@ -1,9 +1,11 @@
 package com.dam.petme.viewModel;
 
+import android.app.Application;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -19,32 +21,32 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class PetViewModel extends ViewModel {
 
     public MutableLiveData<Pet> selectedPet = new MutableLiveData<Pet>();
-    private MutableLiveData<List<Pet>> pets;
+    public MutableLiveData<String> status = new MutableLiveData<String>();
+    public MutableLiveData<List<Pet>> pets = new MutableLiveData<List<Pet>>();
     private DatabaseReference mDatabase;
 
-    public LiveData<List<Pet>> getPetsByStatus(String status) {
-        if (pets == null) {
-            pets = new MutableLiveData<List<Pet>>();
-            loadPets(status);
-        }
+    public LiveData<List<Pet>> getPetsByStatus() {
+        //if (pets == null) {
+        //    pets = new MutableLiveData<List<Pet>>();
+            loadPets();
+        //}
+
         return pets;
     }
 
     public void selectPet(Pet pet) {
-        System.out.println("seleccionn "+pet);
         selectedPet.setValue(pet);
-        //selectedPet = new MutableLiveData<Pet>(pet);
     }
 
     public LiveData<Pet> getSelectedPet() {
         if(selectedPet == null) {
             selectedPet = new MutableLiveData<Pet>();
         }
-        System.out.println(selectedPet);
         return selectedPet;
     }
 
@@ -52,12 +54,13 @@ public class PetViewModel extends ViewModel {
         pets.setValue(petArrayList);
     }
 
-    private void loadPets(String status) {
+    private void loadPets() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // Do an asynchronous operation to fetch users.
         ArrayList<Pet> petsAux = new ArrayList();
+        System.out.println(status.getValue());
 
-        Query myTopPostsQuery = mDatabase.child("pets").orderByChild("status").equalTo("FOUND");
+        Query myTopPostsQuery = mDatabase.child("pets").orderByChild("status").equalTo(status.getValue());
         myTopPostsQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -77,5 +80,13 @@ public class PetViewModel extends ViewModel {
                 // ...
             }
         });
+    }
+
+    public void setStatus(String status){
+        this.status.setValue(status);
+    }
+
+    public LiveData<String> getStatus(){
+        return status;
     }
 }

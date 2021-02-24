@@ -37,6 +37,8 @@
     <string name="filter">+ Filtrar</string>
     <string name="mapView">Ver Mapa</string>
     <string name="viewProfile">Ver perfil</string>
+    <string name="foundFriend">Elije a tu nuevo amigo</string>
+
 
     <!--MyProfile-->
     <string name="home">Home</string>
