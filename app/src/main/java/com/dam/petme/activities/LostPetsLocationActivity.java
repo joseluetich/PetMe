@@ -30,15 +30,19 @@ import java.util.ArrayList;
 public class LostPetsLocationActivity extends AppCompatActivity implements GoogleMap.OnMyLocationButtonClickListener, OnMapReadyCallback {
     private GoogleMap map;
     Toolbar lostPetsLocationToolbar;
-    PetStatus status = PetStatus.FOUND;
+    PetStatus petStatus;
     Button viewProfileButton;
     TextView titleTextView;
     Marker m;
+    String status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lost_pets_location);
+
+        status = (String) getIntent().getExtras().get("status");
+        petStatus = PetStatus.valueOf(status);
 
         lostPetsLocationToolbar = findViewById(R.id.lostPetsLocationToolbar);
         setSupportActionBar(lostPetsLocationToolbar);
@@ -46,14 +50,12 @@ public class LostPetsLocationActivity extends AppCompatActivity implements Googl
         viewProfileButton = findViewById(R.id.viewProfileButton);
         titleTextView = findViewById(R.id.titleTextView);
 
-        String title = "Mascotas "+status.toStringPlural().toLowerCase();
+        String title = "Mascotas "+petStatus.toStringPlural().toLowerCase();
         titleTextView.setText(title);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-
 
     }
 
@@ -75,9 +77,10 @@ public class LostPetsLocationActivity extends AppCompatActivity implements Googl
         PetViewModel model = new ViewModelProvider(this).get(PetViewModel.class);
 
         //Obtengo todos las mascotas encontradas
-        model.getPetsByStatus(status.toStringEnglish()).observe(this, pets -> {
+        model.setStatus(petStatus.toStringEnglish());
+        model.getPetsByStatus().observe(this, pets -> {
             System.out.println("pets ++ "+pets); //Mascotas encontradas
-            System.out.println("status "+status.toStringEnglish());
+            System.out.println("status "+petStatus.toStringEnglish());
             for(Pet pet : pets) {
                 System.out.println(pet.getName()+" "+pet.getStatus()); //Obtengo el nombre y estado
                 System.out.println("Latitud: "+pet.getLatitude()); //Salida de latitud
@@ -89,7 +92,7 @@ public class LostPetsLocationActivity extends AppCompatActivity implements Googl
                     LatLng marker = new LatLng(latitude, longitude); //Ubicacion por defecto en santa fe
                     m = map.addMarker(new MarkerOptions()
                             .position(marker)
-                            .title("Mascota "+status.toString().toLowerCase()+" aquí")
+                            .title("Mascota "+petStatus.toString().toLowerCase()+" aquí")
                             .draggable(false));
                 }
             }

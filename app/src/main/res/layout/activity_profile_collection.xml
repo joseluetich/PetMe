@@ -12,7 +12,7 @@
         tools:context=".activities.ProfileCollectionActivity">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/myProfileToolbar"
+            android:id="@+id/profileCollectionToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
@@ -34,7 +34,7 @@
             app:cardCornerRadius="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myProfileToolbar">
+            app:layout_constraintTop_toBottomOf="@+id/profileCollectionToolbar">
 
             <LinearLayout
                 android:layout_width="match_parent"

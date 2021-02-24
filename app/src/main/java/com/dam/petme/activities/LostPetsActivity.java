@@ -57,7 +57,10 @@ public class LostPetsActivity extends AppCompatActivity {
         addButton = findViewById(R.id.addButton);
         mapButton = findViewById(R.id.mapViewButton);
 
-        if(status.equals("TO_BE_ADOPTED")) mapButton.setVisibility(View.GONE);
+        if(status.equals("TO_BE_ADOPTED")){
+            mapButton.setVisibility(View.GONE);
+            addButton.setVisibility(View.GONE);
+        }
 
         setTitle();
 
@@ -65,6 +68,7 @@ public class LostPetsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LostPetsActivity.this, LostPetsLocationActivity.class);
+                intent.putExtra("status", status);
                 startActivity(intent);
             }
         });

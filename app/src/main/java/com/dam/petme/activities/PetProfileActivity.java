@@ -2,6 +2,7 @@ package com.dam.petme.activities;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -28,7 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.Date;
 
 public class PetProfileActivity extends AppCompatActivity {
-
+    Toolbar petProfileToolbar;
     TextView genderTextView, weightTextView, cityTextView, descriptionTextView, raceTextView, petNameTextView,
             petAgeTextView, stateTextView, responsableTextView;
     Button contactResponsableButton, addToFavouriteButton;
@@ -40,8 +41,10 @@ public class PetProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_profile);
 
-
         String petId = (String) getIntent().getExtras().get("petId");
+
+        petProfileToolbar = findViewById(R.id.petProfileToolbar);
+        setSupportActionBar(petProfileToolbar);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         genderTextView = findViewById(R.id.genderTextView);
@@ -88,6 +91,7 @@ public class PetProfileActivity extends AppCompatActivity {
     }
 
     public void setPetFields(Pet pet) {
+        petProfileToolbar.setTitle("Mascotas "+pet.getStatus().toStringPlural().toLowerCase());
         System.out.println("RACE "+pet.getRace());
         System.out.println("NAME "+pet.getName());
         if(!pet.getName().equals(null) && !pet.getName().isEmpty())
